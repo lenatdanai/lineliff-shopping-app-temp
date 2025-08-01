@@ -5,9 +5,10 @@
     <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/versions/2.22.3/sdk.js"></script>
 </head>
 <body>
+    <div id="userId"></div>
+    <button id="sendMessageBtn">Say Hello</button>
     <div id="product-container">
         <div>Loading na ja...<div/>
-        <div> User username : <div/>
     </div>
     
     <script>
@@ -15,14 +16,39 @@
         liff.init({ liffId: '2007836090-1vNzGD55' })
             .then(() => {
                 console.log('2007836090-1vNzGD55');
-                // if (liff.isLoggedin()) {
-                //     console.log('User is logged in already')
-                // } else {
-                // liff.login();
-                // }
+                if (liff.isLoggedIn()) {
+                    console.log('User is logged in already')
+                    // Get user profile and update div
+                    liff.getProfile()
+                        .then(profile => {
+                            document.getElementById('userId').innerHTML = `User ID: ${profile.userId}`;
+                            console.log('user id', profile);
+                            
+                            // Add click event listener to the button
+                            document.getElementById('sendMessageBtn').addEventListener('click', () => {
+                                liff.sendMessages([
+                                    {
+                                        type: "text",
+                                        text: `Hello ${profile.userId}! Welcome to our shop!`,
+                                    },
+                                ])
+                                .then(() => {
+                                    console.log("Hello message sent");
+                                    alert("Message sent!");
+                                })
+                                .catch((err) => {
+                                    console.log("error", err);
+                                    alert("Error sending message");
+                                });
+                            });
+                        })
+                        .catch(err => console.error('Error getting profile:', err));
+                } else {
+                    liff.login();
+                }
+
+               
                 
-                // const profile = liff.getProfile();
-                // console.log('user id',profile)
                 // Get product ID from URL parameters
                 const urlParams = new URLSearchParams(window.location.search);
                 const productId = urlParams.get('productId');
