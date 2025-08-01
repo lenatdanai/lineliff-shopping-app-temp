@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product LIFF App</title>
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/versions/2.22.3/sdk.js"></script>
+</head>
+<body>
+    <div id="product-container">
+        <div>Loading na ja...<div/>
+        <div> User username : <div/>
+    </div>
+    
+    <script>
+        // Initialize LIFF
+        liff.init({ liffId: '2007836090-1vNzGD55' })
+            .then(() => {
+                console.log('2007836090-1vNzGD55');
+                // if (liff.isLoggedin()) {
+                //     console.log('User is logged in already')
+                // } else {
+                liff.login();
+                // }
+                
+                // const profile = liff.getProfile();
+                // console.log('user id',profile)
+                // Get product ID from URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const productId = urlParams.get('productId');
+                
+                if (productId) {
+                    loadProduct(productId);
+                } else {
+                    showProductList();
+                }
+            })
+            .catch((err) => {
+                console.error('LIFF initialization failed', err);
+            });
+
+        // Function to load specific product
+        function loadProduct(productId) {
+            // Simulate API call
+            const products = {
+                '123': { name: 'Smartphone', price: '$299', image: 'phone.jpg' },
+                '456': { name: 'Laptop', price: '$899', image: 'laptop.jpg' },
+                '789': { name: 'Headphones', price: '$149', image: 'headphones.jpg' }
+            };
+            
+            const product = products[productId];
+            const container = document.getElementById('product-container');
+            
+            if (product) {
+                container.innerHTML = `
+                    <div class="product-detail">
+                        <h2>${product.name}</h2>
+                        <p>Price: ${product.price}</p>
+                        <img src="${product.image}" alt="${product.name}" style="width:100%;max-width:300px;">
+                        <button onclick="shareProduct('${productId}')">Share this product</button>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = '<p>Product not found</p>';
+            }
+        }
+        
+        // Function to share product
+        function shareProduct(productId) {
+            if (liff.isApiAvailable('shareTargetPicker')) {
+                liff.shareTargetPicker([{
+                    type: 'text',
+                    text: `Check out this product: https://liff.line.me/YOUR_LIFF_ID?productId=${productId}`
+                }]);
+            }
+        }
+        
+        // Function to show product list if no specific product
+        function showProductList() {
+            const container = document.getElementById('product-container');
+            container.innerHTML = `
+                <h2>Product List</h2>
+                <button onclick="openProduct('123')">Smartphone</button>
+                <button onclick="openProduct('456')">Laptop</button>
+                <button onclick="openProduct('789')">Headphones</button>
+            `;
+        }
+        
+        // Function to navigate to specific product
+        function openProduct(productId) {
+            window.location.href = `?productId=${productId}`;
+        }
+    </script>
+</body>
+</html>

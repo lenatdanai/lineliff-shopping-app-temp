@@ -1,0 +1,10 @@
+{
+    "name": "liff-app",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "client": "python3 -m http.server --directory src 8000"
+    }
+
+}
